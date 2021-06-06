@@ -13,9 +13,12 @@ RUN apt-get update && \
     apt-get install -y \
     apt-transport-https \
     build-essential \
+    bash-completion \
+    less \
     curl \
     git \
     wget \
+    nano \
     tmux \
     terminator \
     python-pip && \
@@ -38,7 +41,7 @@ RUN apt-get update && \
     ros-${ROS_DISTRO}-gazebo-ros-control \
     ros-${ROS_DISTRO}-depth-image-proc \
     ros-${ROS_DISTRO}-urdf-tutorial \
-    ros-${ROS_DISTRO}-inux-peripheral-interfaces \
+    ros-${ROS_DISTRO}-linux-peripheral-interfaces \
     ros-${ROS_DISTRO}-diagnostics \
     ros-${ROS_DISTRO}-move-base* \
     ros-${ROS_DISTRO}-map-server* \
@@ -46,7 +49,9 @@ RUN apt-get update && \
     ros-${ROS_DISTRO}-navigation* \
     ros-${ROS_DISTRO}-openni2-camera \
     ros-${ROS_DISTRO}-openni2-launch \
-    ros-${ROS_DISTRO}-joy && \
+    ros-${ROS_DISTRO}-pcl-ros \
+    ros-${ROS_DISTRO}-joy \
+    python-rosdep && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -58,11 +63,24 @@ RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
 	catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
 	cd /root && rm -rf turtlebot_ws
 
+RUN rosdep init && rosdep update
+
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+
 # install code-server
 RUN wget https://github.com/cdr/code-server/releases/download/v3.10.2/code-server_3.10.2_$(dpkg --print-architecture).deb && \
     dpkg -i code-server_3.10.2_$(dpkg --print-architecture).deb
 
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+# colorize less
+RUN echo "export LESS='-R'" >> ~/.bash_profile && \
+    echo "export LESSOPEN='|pygmentize -g %s'" >> ~/.bash_profile
+    
+# enable bash completion
+RUN git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && \
+    ~/.bash_it/install.sh --silent && \
+    rm ~/.bashrc.bak && \
+    echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
+    bash -i -c "bash-it enable completion git"
 
 COPY ./app /app
 

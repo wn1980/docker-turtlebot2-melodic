@@ -21,7 +21,7 @@ services:
 
   turtlebot2:
     build: .
-    image: wn1980/turtlebot2_melodic${TAG}
+    image: wn1980/turtlebot2-melodic${TAG}
     container_name: turtlebot2_melodic
     init: true
     restart: unless-stopped
@@ -33,6 +33,7 @@ services:
       - DISPLAY=:1
       #- QT_X11_NO_MITSHM=1
       - ROS_MASTER_URI=http://localhost:11311
+      - TURTLEBOT_3D_SENSOR=asus_xtion_pro
     ports:
       - "11311:11311"
       - "8558:8558"
