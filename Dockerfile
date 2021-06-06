@@ -65,8 +65,6 @@ RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
 
 RUN rosdep init && rosdep update
 
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
-
 # install code-server
 RUN wget https://github.com/cdr/code-server/releases/download/v3.10.2/code-server_3.10.2_$(dpkg --print-architecture).deb && \
     dpkg -i code-server_3.10.2_$(dpkg --print-architecture).deb
@@ -74,13 +72,15 @@ RUN wget https://github.com/cdr/code-server/releases/download/v3.10.2/code-serve
 # colorize less
 RUN echo "export LESS='-R'" >> ~/.bash_profile && \
     echo "export LESSOPEN='|pygmentize -g %s'" >> ~/.bash_profile
-    
+
 # enable bash completion
 RUN git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && \
     ~/.bash_it/install.sh --silent && \
     rm ~/.bashrc.bak && \
     echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
     bash -i -c "bash-it enable completion git"
+
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 COPY ./app /app
 
