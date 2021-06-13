@@ -8,6 +8,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN  apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
+RUN sed -i -e 's/http:\/\/archive/mirror:\/\/mirrors/' -e 's/http:\/\/security/mirror:\/\/mirrors/' -e 's/\/ubuntu\//\/mirrors.txt/' /etc/apt/sources.list
+
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
@@ -68,8 +70,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 #RUN rm /etc/apt/apt.conf.d/docker-clean
-
-#RUN sed -i -e 's/http:\/\/archive/mirror:\/\/mirrors/' -e 's/http:\/\/security/mirror:\/\/mirrors/' -e 's/\/ubuntu\//\/mirrors.txt/' /etc/apt/sources.list
 
 # install code-server
 RUN wget https://github.com/cdr/code-server/releases/download/v3.10.2/code-server_3.10.2_$(dpkg --print-architecture).deb && \
