@@ -32,15 +32,15 @@ services:
     environment:
       - DISPLAY=:1
       #- QT_X11_NO_MITSHM=1
-      - ROS_MASTER_URI=http://localhost:11311
-      - TURTLEBOT_3D_SENSOR=asus_xtion_pro
+      #- ROS_MASTER_URI=http://localhost:11311
+      #- TURTLEBOT_3D_SENSOR=asus_xtion_pro
     privileged: true
     devices:
         - "/dev:/dev"
     volumes:
-      - workspace:/workspace
+      - workspace:/root/workspace
       - "/run/systemd:/run/systemd"
       - "/dev:/dev"
     ports:
-      - "11311:11311"
+      #- "11311:11311"
       - "8558:8558"
