@@ -51,11 +51,6 @@ RUN apt-get update && \
 	catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
 	cd /root && rm -rf turtlebot_ws
 
-RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
-    rosdep init && \
-    rosdep fix-permissions && \
-    rosdep update
-
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
@@ -70,10 +65,11 @@ RUN apt-get update && \
     xkb-data \
     dbus-x11 \
     net-tools \
-    #novnc \
-    #supervisor \
+    usbutils \
+    sudo \
     tigervnc-standalone-server \
-    tigervnc-xorg-extension \
+    #tigervnc-xorg-extension \
+    #novnc \
     python-pip && \
     pip install -U --no-cache-dir supervisor supervisor_twiddler && \
     apt-get autoremove -y && \
@@ -96,6 +92,35 @@ RUN rm /etc/apt/apt.conf.d/docker-clean
 RUN wget https://github.com/cdr/code-server/releases/download/v3.10.2/code-server_3.10.2_$(dpkg --print-architecture).deb && \
     dpkg -i code-server_3.10.2_$(dpkg --print-architecture).deb
 
+# install vscode
+RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && \
+    install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/ && \
+    sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && \
+    rm -f packages.microsoft.gpg
+
+RUN apt-get install -y apt-transport-https && \
+    apt-get update && \
+    apt-get install -y code # or code-insiders
+
+RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
+    rosdep init
+
+# setup user
+RUN useradd -m developer && \
+    echo developer ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/developer && \
+    chmod 0440 /etc/sudoers.d/developer
+
+USER developer
+
+WORKDIR /home/developer
+
+ENV HOME /home/developer
+
+ENV SHELL /bin/bash
+
+# init rosdep
+RUN rosdep fix-permissions && rosdep update
+
 # colorize less
 RUN echo "export LESS='-R'" >> ~/.bash_profile && \
     echo "export LESSOPEN='|pygmentize -g %s'" >> ~/.bash_profile
@@ -107,6 +132,8 @@ RUN git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && \
     echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
     bash -i -c "bash-it enable completion git"
 
+RUN echo "source ~/.bashrc" >> ~/.bash_profile 
+
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 COPY ./app /app
@@ -116,5 +143,7 @@ VOLUME /tmp/.X11-unix
 ENV DISPLAY ":1"
 
 EXPOSE 8558 11311 9901
+
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD ["sudo", "-E", "/usr/local/bin/supervisord", "-c", "/app/supervisord.conf"]

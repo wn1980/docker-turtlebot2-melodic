@@ -171,7 +171,9 @@ else
     elif [[ "$SENSOR" == "ydlidar" ]]
         then
             cd $LINODIR/linorobot_ws/src
-            git clone https://github.com/YDLIDAR/ydlidar_ros.git
+            if [ ! -d "linorobot_ws/src" ]; then
+                git clone https://github.com/YDLIDAR/ydlidar_ros.git
+            if
     fi
 
     if [[ "$BASE" == "ackermann" ]]
