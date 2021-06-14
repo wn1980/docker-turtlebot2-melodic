@@ -51,7 +51,7 @@ RUN apt-get update && \
 	catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
 	cd /root && rm -rf turtlebot_ws
 
-RUN rm /etc/ros/rosdep/sources.list.d/20-default.list &&\
+RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
     rosdep init && \
     rosdep fix-permissions && \
     rosdep update
@@ -70,8 +70,8 @@ RUN apt-get update && \
     xkb-data \
     dbus-x11 \
     net-tools \
-    novnc \
-    supervisor \
+    #novnc \
+    #supervisor \
     tigervnc-standalone-server \
     tigervnc-xorg-extension \
     python-pip && \
@@ -80,13 +80,15 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-ENV NO_VNC_HOME=/usr/share/novnc/ 
+# install noVNC
+ENV NO_VNC_HOME=/opt/noVNC
+
+RUN rm -Rf $NO_VNC_HOME && \
+    mkdir -p $NO_VNC_HOME/utils/websockify && \
+    wget -qO- https://github.com/novnc/noVNC/archive/v1.2.0.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME && \
+    wget -qO- https://github.com/novnc/websockify/archive/v0.9.0.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME/utils/websockify
 
 COPY ./index.html $NO_VNC_HOME
-
-VOLUME /tmp/.X11-unix
-
-ENV DISPLAY ":1"
 
 RUN rm /etc/apt/apt.conf.d/docker-clean
 
@@ -108,6 +110,10 @@ RUN git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && \
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 COPY ./app /app
+
+VOLUME /tmp/.X11-unix
+
+ENV DISPLAY ":1"
 
 EXPOSE 8558 11311 9901
 
