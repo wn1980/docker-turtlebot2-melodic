@@ -63,13 +63,32 @@ RUN apt-get update && \
     less \
     tmux \
     terminator \
+    fluxbox \
+    xfonts-base \
+    xauth \
+    x11-xkb-utils \
+    xkb-data \
+    dbus-x11 \
+    net-tools \
+    novnc \
+    supervisor \
+    tigervnc-standalone-server \
+    tigervnc-xorg-extension \
     python-pip && \
     pip install -U --no-cache-dir supervisor supervisor_twiddler && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-#RUN rm /etc/apt/apt.conf.d/docker-clean
+ENV NO_VNC_HOME=/usr/share/novnc/ 
+
+COPY ./index.html $NO_VNC_HOME
+
+VOLUME /tmp/.X11-unix
+
+ENV DISPLAY ":1"
+
+RUN rm /etc/apt/apt.conf.d/docker-clean
 
 # install code-server
 RUN wget https://github.com/cdr/code-server/releases/download/v3.10.2/code-server_3.10.2_$(dpkg --print-architecture).deb && \
@@ -90,6 +109,6 @@ RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 COPY ./app /app
 
-EXPOSE 8558 11311
+EXPOSE 8558 11311 9901
 
 CMD ["sudo", "-E", "/usr/local/bin/supervisord", "-c", "/app/supervisord.conf"]
