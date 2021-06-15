@@ -6,7 +6,7 @@
     <!--
         <Include>/etc/jwm/debian-menu</Include>
     -->
-        <Program icon="terminal.png" label="Terminal">terminator</Program>
+        <Program icon="terminal.png" label="terminator">terminator</Program>
     <!--
         <Separator/>
         <Program icon="lock.png" label="Lock">
