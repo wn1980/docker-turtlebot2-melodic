@@ -55,7 +55,8 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
     bash-completion \
-    less \
+    #less \
+    htop \
     tmux \
     terminator \
     #fluxbox \
@@ -91,7 +92,8 @@ RUN rm /etc/apt/apt.conf.d/docker-clean
 
 # install code-server
 RUN wget https://github.com/cdr/code-server/releases/download/v3.10.2/code-server_3.10.2_$(dpkg --print-architecture).deb && \
-    dpkg -i code-server_3.10.2_$(dpkg --print-architecture).deb
+    dpkg -i code-server_3.10.2_$(dpkg --print-architecture).deb && \
+    rm -f code-server_3.10.2_$(dpkg --print-architecture).deb
 
 # install vscode
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && \
@@ -106,14 +108,16 @@ RUN apt-get install -y apt-transport-https && \
 RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
     rosdep init
 
+RUN mkdir -p /workspace
+
 # setup user
 RUN useradd -m developer && \
     usermod -aG sudo developer && \
     usermod --shell /bin/bash developer && \
+    chown -R developer:developer /workspace && \
+    ln -sfn /workspace /home/developer/workspace && \
     echo developer ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/developer && \
     chmod 0440 /etc/sudoers.d/developer
-
-COPY ./system.jwmrc /etc/jwm/
 
 ENV USER=developer
 
@@ -140,16 +144,14 @@ RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
     #bash -i -c "bash-it enable completion git" && \
     echo "source ~/.bashrc" >> ~/.bash_profile 
 
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+VOLUME /tmp/.X11-unix
 
 COPY ./app /app
 
-VOLUME /tmp/.X11-unix
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 ENV DISPLAY ":1"
 
-EXPOSE 8558 11311 9901
-
-ENTRYPOINT ["/app/entrypoint.sh"]
+EXPOSE 11311 8558 9901
 
 CMD ["sudo", "-E", "/usr/local/bin/supervisord", "-c", "/app/supervisord.conf"]
