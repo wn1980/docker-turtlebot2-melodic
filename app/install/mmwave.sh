@@ -21,10 +21,13 @@ fi
 
 cd ~/workspace/mmwave_ti_ros/ros_driver/
 
-catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0
+#catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0
+catkin_make install -DCMAKE_BUILD_TYPE=Release -DCATKIN_ENABLE_TESTING=0
+
+echo "source ~/workspace/mmwave_ti_ros/ros_driver/devel/setup.bash" >> ~/.bashrc
 
 cd ~/workspace/mmwave_ti_ros/autonomous_robotics_ros/
 
-catkin_make
+source ~/workspace/mmwave_ti_ros/ros_driver/devel/setup.bash && catkin_make
 
 echo "source ~/workspace/mmwave_ti_ros/autonomous_robotics_ros/devel/setup.bash" >> ~/.bashrc
