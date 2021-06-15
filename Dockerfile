@@ -58,7 +58,8 @@ RUN apt-get update && \
     less \
     tmux \
     terminator \
-    fluxbox \
+    #fluxbox \
+    jwm \
     xfonts-base \
     xauth \
     x11-xkb-utils \
@@ -107,32 +108,37 @@ RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
 
 # setup user
 RUN useradd -m developer && \
+    usermod -aG sudo developer && \
+    usermod --shell /bin/bash developer && \
     echo developer ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/developer && \
     chmod 0440 /etc/sudoers.d/developer
 
-USER developer
+COPY ./system.jwmrc /etc/jwm/
 
-WORKDIR /home/developer
+ENV USER=developer
 
 ENV HOME /home/developer
 
 ENV SHELL /bin/bash
 
+USER $USER
+
+WORKDIR /home/developer
+
 # init rosdep
 RUN rosdep fix-permissions && rosdep update
 
 # colorize less
-RUN echo "export LESS='-R'" >> ~/.bash_profile && \
-    echo "export LESSOPEN='|pygmentize -g %s'" >> ~/.bash_profile
+#RUN echo "export LESS='-R'" >> ~/.bash_profile && \
+#    echo "export LESSOPEN='|pygmentize -g %s'" >> ~/.bash_profile
 
 # enable bash completion
-RUN git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && \
-    ~/.bash_it/install.sh --silent && \
-    rm ~/.bashrc.bak && \
-    echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
-    bash -i -c "bash-it enable completion git"
-
-RUN echo "source ~/.bashrc" >> ~/.bash_profile 
+RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
+    #git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.bash_it && \
+    #~/.bash_it/install.sh --silent && \
+    #rm ~/.bashrc.bak && \
+    #bash -i -c "bash-it enable completion git" && \
+    echo "source ~/.bashrc" >> ~/.bash_profile 
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
