@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION=3.10.2
+VERSION=3.11.0
 
 #if ! command -v code-server &> /dev/null
 #then
@@ -16,7 +16,7 @@ then
     echo -e "\n===================\nInstall code-server...\n================="    
 
     # install code-server
-    wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_3.10.2_$(dpkg --print-architecture).deb && \
+    wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     sudo dpkg -i code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     rm -f code-server_${VERSION}_$(dpkg --print-architecture).deb
 

@@ -91,9 +91,10 @@ COPY ./index.html $NO_VNC_HOME
 RUN rm /etc/apt/apt.conf.d/docker-clean
 
 # install code-server
-RUN wget https://github.com/cdr/code-server/releases/download/v3.10.2/code-server_3.10.2_$(dpkg --print-architecture).deb && \
-    dpkg -i code-server_3.10.2_$(dpkg --print-architecture).deb && \
-    rm -f code-server_3.10.2_$(dpkg --print-architecture).deb
+ENV VERSION=3.11.0
+RUN wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
+    dpkg -i code-server_${VERSION}_$(dpkg --print-architecture).deb && \
+    rm -f code-server_${VERSION}_$(dpkg --print-architecture).deb
 
 # install vscode
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && \
