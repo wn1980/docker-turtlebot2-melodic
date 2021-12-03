@@ -91,20 +91,20 @@ COPY ./index.html $NO_VNC_HOME
 RUN rm /etc/apt/apt.conf.d/docker-clean
 
 # install code-server
-ENV VERSION=3.11.0
+ENV VERSION=3.12.0
 RUN wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     dpkg -i code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     rm -f code-server_${VERSION}_$(dpkg --print-architecture).deb
 
 # install vscode
-RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && \
-    install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/ && \
-    sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && \
-    rm -f packages.microsoft.gpg
+#RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && \
+#    install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/ && \
+#    sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && \
+#    rm -f packages.microsoft.gpg
 
-RUN apt-get install -y apt-transport-https && \
-    apt-get update && \
-    apt-get install -y code # or code-insiders
+#RUN apt-get install -y apt-transport-https && \
+#    apt-get update && \
+#    apt-get install -y code # or code-insiders
 
 RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
     rosdep init

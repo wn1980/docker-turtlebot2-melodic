@@ -20,7 +20,7 @@ services:
   #    retries: 20
 
   turtlebot2:
-    build: .
+    #build: .
     image: wn1980/turtlebot2-melodic${TAG}
     container_name: turtlebot2_melodic
     init: true
