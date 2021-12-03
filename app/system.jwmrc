@@ -19,6 +19,7 @@
     </RootMenu>
 
     <!-- Options for program groups. -->
+    <!--
     <Group>
         <Option>tiled</Option>
         <Option>aerosnap</Option>
@@ -36,21 +37,26 @@
         <Option>drag</Option>
         <Option>notitle</Option>
     </Group>
+    -->
 
     <!-- Tray at the bottom. -->
-    <Tray x="0" y="-1" height="25" autohide="off">
+    <Tray x="0" y="-1" height="25" autohide="bottom">
 
+        <!--
         <TrayButton icon="/usr/share/jwm/jwm-red.svg">root:1</TrayButton>
         <Spacer width="2"/>
         <TrayButton label="_">showdesktop</TrayButton>
         <Spacer width="2"/>
+        -->
 
         <Pager labeled="true"/>
 
         <TaskList maxwidth="256"/>
 
         <Dock/>
+        <!--
         <Clock format="%H:%M"><Button mask="123">exec:xclock</Button></Clock>
+        -->
 
     </Tray>
 
@@ -175,7 +181,10 @@
               contained within a Desktop tag to give a specific background
               for that desktop.
          -->
-        <Background type="solid">#111111</Background>
+        <Background type="solid">#1a163b</Background>
+        
+        <Background type="scale">/app/bg.png</Background>
+        
     </Desktops>
 
     <!-- Double click speed (in milliseconds) -->
