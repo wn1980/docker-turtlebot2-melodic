@@ -41,16 +41,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# compile turtlebot2 packages from sources
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    source /opt/ros/$ROS_DISTRO/setup.bash && \
-    mkdir -p ~/turtlebot_ws/src && \
-	cd ~/turtlebot_ws && \
-    curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_basic.sh | bash && \
-	catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
-	cd /root && rm -rf turtlebot_ws
-
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
@@ -73,6 +63,7 @@ RUN apt-get update && \
     #tigervnc-xorg-extension \
     #novnc \
     python-pip && \
+    curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python - && \
     pip install -U --no-cache-dir supervisor supervisor_twiddler && \
     apt-get autoremove -y && \
     apt-get clean && \
@@ -83,8 +74,8 @@ ENV NO_VNC_HOME=/opt/noVNC
 
 RUN rm -Rf $NO_VNC_HOME && \
     mkdir -p $NO_VNC_HOME/utils/websockify && \
-    wget -qO- https://github.com/novnc/noVNC/archive/v1.2.0.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME && \
-    wget -qO- https://github.com/novnc/websockify/archive/v0.9.0.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME/utils/websockify
+    wget -qO- https://github.com/novnc/noVNC/archive/v1.3.0.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME && \
+    wget -qO- https://github.com/novnc/websockify/archive/v0.10.0.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME/utils/websockify
 
 COPY ./index.html $NO_VNC_HOME
 
@@ -144,6 +135,17 @@ RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
     #rm ~/.bashrc.bak && \
     #bash -i -c "bash-it enable completion git" && \
     echo "source ~/.bashrc" >> ~/.bash_profile 
+
+# compile turtlebot2 packages from sources
+RUN sudo apt-get update && \
+    sudo apt-get upgrade -y && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    mkdir -p ~/turtlebot_ws/src && \
+	cd ~/turtlebot_ws && \
+    curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_all.sh | bash - && \
+    catkin_make
+	#catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
+	#cd /root && rm -rf turtlebot_ws
 
 VOLUME /tmp/.X11-unix
 
