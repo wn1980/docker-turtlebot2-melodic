@@ -38,7 +38,7 @@ RUN apt-get update && \
     ros-${ROS_DISTRO}-octomap-rviz-plugins \
     ros-${ROS_DISTRO}-vision-opencv \
     ros-${ROS_DISTRO}-depth-image-proc \
-    ros-${ROS_DISTRO}-joy && \
+    ros-${ROS_DISTRO}-joy \
     python-rosdep && \
     apt-get autoremove -y && \
     apt-get clean && \
