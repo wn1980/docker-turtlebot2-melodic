@@ -36,7 +36,7 @@ sudo touch /etc/supervisor/conf.d/code-server.conf
 
 sudo cat > "/etc/supervisor/conf.d/code-server.conf" <<EOF
 [program:code-server]
-command=code-server --bind-addr 0.0.0.0:9889 --auth none
+command=code-server --bind-addr 0.0.0.0:12345 --auth none
 user=%(ENV_USER)s
 autostart=true
 autorestart=true
@@ -59,4 +59,4 @@ fi
 #nohup code-server --bind-addr 0.0.0.0:9889 --cert --auth none & 
 #cat nohup.out
 
-code-server --bind-addr 0.0.0.0:9889 --cert --auth none
+code-server --bind-addr 0.0.0.0:12345 --cert --auth none
