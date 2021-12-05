@@ -154,6 +154,8 @@ VOLUME /tmp/.X11-unix
 
 COPY ./app /app
 
+RUN sudo /app/install/tigervnc.sh
+
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 ENV DISPLAY ":1"
