@@ -36,6 +36,9 @@ RUN apt-get update && \
     ros-${ROS_DISTRO}-hector-slam \
     ros-${ROS_DISTRO}-octomap-server \
     ros-${ROS_DISTRO}-octomap-rviz-plugins \
+    ros-${ROS_DISTRO}-vision-opencv \
+    ros-${ROS_DISTRO}-depth-image-proc \
+    ros-${ROS_DISTRO}-joy && \
     python-rosdep && \
     apt-get autoremove -y && \
     apt-get clean && \
