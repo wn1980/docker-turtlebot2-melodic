@@ -146,7 +146,7 @@ RUN sudo apt-get update && \
     mkdir -p ~/turtlebot_ws/src && \
 	cd ~/turtlebot_ws && \
     curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_all.sh | bash - && \
-    catkin_make
+    catkin_make install
 	#catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
 	#cd /root && rm -rf turtlebot_ws
 
@@ -157,6 +157,8 @@ COPY ./app /app
 RUN sudo /app/install/tigervnc.sh
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+
+RUN echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc
 
 ENV DISPLAY ":1"
 
