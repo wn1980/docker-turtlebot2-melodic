@@ -141,17 +141,18 @@ RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
     echo "source ~/.bashrc" >> ~/.bash_profile 
 
 # compile turtlebot2 packages from sources
-RUN sudo apt-get update && \
-    sudo apt-get upgrade -y && \
-    source /opt/ros/$ROS_DISTRO/setup.bash && \
+COPY ./app/install/turtlebot2.sh /
+
+RUN sudo apt-get update && sudo apt-get upgrade -y 
+RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     mkdir -p ~/turtlebot_ws/src && \
 	cd ~/turtlebot_ws && \
-    curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_all.sh | bash - && \
-    catkin_make install
+    bash /turtlebot2.sh && \
+    #curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_basic.sh | bash - && \
+    catkin_make install -DCMAKE_BUILD_TYPE=Release && \
 	#catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
-	#cd /root && rm -rf turtlebot_ws
-
-VOLUME /tmp/.X11-unix
+	#cd /root && rm -rf turtlebot_ws && \
+    rm -f /turtlebot2.sh
 
 # update tigervnc
 COPY ./app/install/tigervnc.sh /
@@ -163,6 +164,8 @@ COPY ./app /app
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 RUN echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc
+
+VOLUME /tmp/.X11-unix
 
 ENV DISPLAY ":1"
 
