@@ -65,6 +65,7 @@ RUN apt-get update && \
     tigervnc-standalone-server \
     #tigervnc-xorg-extension \
     #novnc \
+    python3-numpy \
     python-pip && \
     curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python - && \
     pip install -U --no-cache-dir supervisor supervisor_twiddler && \
@@ -152,9 +153,12 @@ RUN sudo apt-get update && \
 
 VOLUME /tmp/.X11-unix
 
-COPY ./app /app
+# update tigervnc
+COPY ./app/install/tigervnc.sh /
 
-RUN sudo /app/install/tigervnc.sh
+RUN sudo /tigervnc.sh && sudo rm -f /tigervnc.sh
+
+COPY ./app /app
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
