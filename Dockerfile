@@ -140,10 +140,16 @@ RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
     #bash -i -c "bash-it enable completion git" && \
     echo "source ~/.bashrc" >> ~/.bash_profile 
 
+# update tigervnc
+COPY ./app/install/tigervnc.sh /
+
+RUN sudo /tigervnc.sh && sudo rm -f /tigervnc.sh
+
 # compile turtlebot2 packages from sources
+RUN sudo apt-get update && sudo apt-get upgrade -y 
+
 COPY ./app/install/turtlebot2.sh /
 
-RUN sudo apt-get update && sudo apt-get upgrade -y 
 RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     mkdir -p ~/turtlebot_ws/src && \
 	cd ~/turtlebot_ws && \
@@ -152,12 +158,7 @@ RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     catkin_make install -DCMAKE_BUILD_TYPE=Release && \
 	#catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
 	#cd /root && rm -rf turtlebot_ws && \
-    rm -f /turtlebot2.sh
-
-# update tigervnc
-COPY ./app/install/tigervnc.sh /
-
-RUN sudo /tigervnc.sh && sudo rm -f /tigervnc.sh
+    sudo rm -f /turtlebot2.sh
 
 COPY ./app /app
 
