@@ -39,6 +39,7 @@ RUN apt-get update && \
     ros-${ROS_DISTRO}-vision-opencv \
     ros-${ROS_DISTRO}-depth-image-proc \
     ros-${ROS_DISTRO}-joy \
+    ros-${ROS_DISTRO}-serial \
     python-rosdep && \
     apt-get autoremove -y && \
     apt-get clean && \
