@@ -91,18 +91,28 @@ RUN wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-s
     dpkg -i code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     rm -f code-server_${VERSION}_$(dpkg --print-architecture).deb
 
-# install vscode
-#RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && \
-#    install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/ && \
-#    sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' && \
-#    rm -f packages.microsoft.gpg
-
-#RUN apt-get install -y apt-transport-https && \
-#    apt-get update && \
-#    apt-get install -y code # or code-insiders
-
 RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
     rosdep init
+
+# update tigervnc
+COPY ./app/install/tigervnc.sh /
+
+RUN /tigervnc.sh && sudo rm -f /tigervnc.sh
+
+# compile turtlebot2 packages from sources
+RUN apt-get update && sudo apt-get upgrade -y 
+
+COPY ./app/install/turtlebot2.sh /
+
+RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
+    mkdir -p ~/turtlebot_ws/src && \
+	cd ~/turtlebot_ws && \
+    bash /turtlebot2.sh && \
+    #curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_basic.sh | bash - && \
+    #catkin_make install -DCMAKE_BUILD_TYPE=Release && \
+	catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
+	cd /root && rm -rf turtlebot_ws && \
+    rm -f /turtlebot2.sh
 
 RUN mkdir -p /workspace
 
@@ -140,31 +150,11 @@ RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
     #bash -i -c "bash-it enable completion git" && \
     echo "source ~/.bashrc" >> ~/.bash_profile 
 
-# update tigervnc
-COPY ./app/install/tigervnc.sh /
-
-RUN sudo /tigervnc.sh && sudo rm -f /tigervnc.sh
-
-# compile turtlebot2 packages from sources
-RUN sudo apt-get update && sudo apt-get upgrade -y 
-
-COPY ./app/install/turtlebot2.sh /
-
-RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
-    mkdir -p ~/turtlebot_ws/src && \
-	cd ~/turtlebot_ws && \
-    bash /turtlebot2.sh && \
-    #curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_basic.sh | bash - && \
-    catkin_make install -DCMAKE_BUILD_TYPE=Release && \
-	#catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
-	#cd /root && rm -rf turtlebot_ws && \
-    sudo rm -f /turtlebot2.sh
-
 COPY ./app /app
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
-RUN echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc
+#RUN echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc
 
 VOLUME /tmp/.X11-unix
 
