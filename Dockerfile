@@ -10,9 +10,8 @@ RUN  apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31
 
 RUN sed -i -e 's/http:\/\/archive/mirror:\/\/mirrors/' -e 's/http:\/\/security/mirror:\/\/mirrors/' -e 's/\/ubuntu\//\/mirrors.txt/' /etc/apt/sources.list
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y \
+RUN apt-get update && apt-get upgrade -y 
+RUN apt-get install -y \
     apt-transport-https \
     build-essential \
     curl \
@@ -26,9 +25,8 @@ RUN apt-get update && \
 RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
     curl -L http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y \
+RUN apt-get update && apt-get upgrade -y 
+RUN apt-get install -y \
     ros-${ROS_DISTRO}-desktop-full \
     ros-${ROS_DISTRO}-linux-peripheral-interfaces \
     ros-${ROS_DISTRO}-diagnostics \
@@ -40,21 +38,18 @@ RUN apt-get update && \
     ros-${ROS_DISTRO}-depth-image-proc \
     ros-${ROS_DISTRO}-joy \
     ros-${ROS_DISTRO}-serial \
+    ros-${ROS_DISTRO}-openni2-launch \
     python-rosdep && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y \
+RUN apt-get update && apt-get upgrade -y 
+RUN apt-get install -y \
     bash-completion \
-    #less \
     htop \
     tmux \
     terminator \
-    #fluxbox \
-    jwm \
     xfonts-base \
     xauth \
     x11-xkb-utils \
@@ -66,6 +61,9 @@ RUN apt-get update && \
     tigervnc-standalone-server \
     #tigervnc-xorg-extension \
     #novnc \
+    #fluxbox \
+    jwm \
+    #less \
     python3-numpy \
     python-pip && \
     curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python - && \
@@ -112,7 +110,7 @@ RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     #curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_basic.sh | bash - && \
     #catkin_make install -DCMAKE_BUILD_TYPE=Release && \
 	catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
-	cd /root && rm -rf turtlebot_ws && \
+	rm -rf /root/turtlebot_ws && \
     rm -f /turtlebot2.sh
 
 RUN mkdir -p /workspace
@@ -154,6 +152,8 @@ RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
 COPY ./app /app
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+
+RUN echo "export TURTLEBOT_3D_SENSOR=asus_xtion_pro" >> ~/.bashrc
 
 #RUN echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc
 
