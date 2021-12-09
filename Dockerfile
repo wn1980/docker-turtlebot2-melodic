@@ -39,6 +39,7 @@ RUN apt-get install -y \
     ros-${ROS_DISTRO}-joy \
     ros-${ROS_DISTRO}-serial \
     ros-${ROS_DISTRO}-openni2-launch \
+    ros-${ROS_DISTRO}-gmapping \
     python-rosdep && \
     apt-get autoremove -y && \
     apt-get clean && \
@@ -103,14 +104,15 @@ RUN apt-get update && sudo apt-get upgrade -y
 
 COPY ./app/install/turtlebot2.sh /
 
-RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
-    mkdir -p ~/turtlebot_ws/src && \
-	cd ~/turtlebot_ws && \
-    bash /turtlebot2.sh && \
+RUN bash /turtlebot2.sh && \
+    #source /opt/ros/$ROS_DISTRO/setup.bash && \
+    #mkdir -p ~/turtlebot_ws/src && \
+	#cd ~/turtlebot_ws && \
+    #bash /turtlebot2.sh && \
     #curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_basic.sh | bash - && \
     #catkin_make install -DCMAKE_BUILD_TYPE=Release && \
-	catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
-	rm -rf /root/turtlebot_ws && \
+	#catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
+	#rm -rf /root/turtlebot_ws && \
     rm -f /turtlebot2.sh
 
 RUN mkdir -p /workspace
@@ -154,6 +156,8 @@ COPY ./app /app
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 RUN echo "export TURTLEBOT_3D_SENSOR=asus_xtion_pro" >> ~/.bashrc
+
+RUN echo "export TURTLEBOT_MAP_FILE=~/workspace/maps/map.yaml" >> ~/.bashrc
 
 #RUN echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc
 

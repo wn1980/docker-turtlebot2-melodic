@@ -6,14 +6,15 @@ set -e
 # necessary on a fresh bionic install
 sudo apt-get install git -y
 
-mkdir -p src
+mkdir -p ~/turtlebot_ws/src
 
-cd src
+cd ~/turtlebot_ws/src
 
 git clone https://github.com/turtlebot/turtlebot.git
 git clone https://github.com/turtlebot/turtlebot_msgs.git
 git clone https://github.com/turtlebot/turtlebot_apps.git
 git clone https://github.com/turtlebot/turtlebot_simulator.git
+git clone https://github.com/turtlebot/turtlebot_viz.git
 
 #git clone https://github.com/yujinrobot/kobuki_msgs.git
 
@@ -40,3 +41,12 @@ sudo apt-get install  -y \
   ros-melodic-yocs-velocity-smoother \
   ros-melodic-depthimage-to-laserscan \
   ros-melodic-joy
+
+  # make and install
+  cd ~/turtlebot_ws
+  
+  source /opt/ros/$ROS_DISTRO/setup.bash
+
+  catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 
+
+	rm -rf ~/turtlebot_ws 
