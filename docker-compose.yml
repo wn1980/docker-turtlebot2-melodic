@@ -5,8 +5,15 @@ volumes:
 
 services:
 
+  #master:
+  #  image: ros:melodic-ros-core-bionic
+  #  container_name: ros_master
+  #  init: true
+  #  restart: always
+  #  command: roscore
+
   turtlebot2:
-    build: .
+    build: ./image
     image: wn1980/turtlebot2-melodic${TAG}
     container_name: turtlebot2_melodic
     init: true
@@ -36,4 +43,4 @@ services:
     ports:
       #- "11311:11311"
       - "8558:8558"
-      - "9901:9901"
+      - "3901:9901"
