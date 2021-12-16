@@ -16,6 +16,10 @@ services:
     init: true
     restart: always
     command: roscore
+    expose:
+      - 11311
+    ports:
+      - "11311:11311"
 
   turtlebot2:
     #build: ./image
