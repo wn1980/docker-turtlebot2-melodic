@@ -24,7 +24,7 @@ services:
   turtlebot2:
     #build: ./image
     image: wn1980/turtlebot2-melodic${TAG}
-    container_name: turtlebot2_melodic
+    container_name: ros_turtlebot2_melodic
     init: true
     restart: unless-stopped
     #volumes_from:
