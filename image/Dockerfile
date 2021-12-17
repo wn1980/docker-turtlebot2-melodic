@@ -10,6 +10,7 @@ RUN  apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31
 
 RUN sed -i -e 's/http:\/\/archive/mirror:\/\/mirrors/' -e 's/http:\/\/security/mirror:\/\/mirrors/' -e 's/\/ubuntu\//\/mirrors.txt/' /etc/apt/sources.list
 
+# install Ubuntu packages
 RUN apt-get update && apt-get upgrade -y 
 RUN apt-get install -y \
     apt-transport-https \
@@ -17,36 +18,7 @@ RUN apt-get install -y \
     curl \
     git \
     wget \
-    nano && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
-    curl -L http://packages.osrfoundation.org/gazebo.key | apt-key add -
-
-RUN apt-get update && apt-get upgrade -y 
-RUN apt-get install -y \
-    ros-${ROS_DISTRO}-desktop-full \
-    ros-${ROS_DISTRO}-linux-peripheral-interfaces \
-    ros-${ROS_DISTRO}-diagnostics \
-    ros-${ROS_DISTRO}-navigation \
-    ros-${ROS_DISTRO}-hector-slam \
-    ros-${ROS_DISTRO}-octomap-server \
-    ros-${ROS_DISTRO}-octomap-rviz-plugins \
-    ros-${ROS_DISTRO}-vision-opencv \
-    ros-${ROS_DISTRO}-depth-image-proc \
-    ros-${ROS_DISTRO}-joy \
-    ros-${ROS_DISTRO}-serial \
-    ros-${ROS_DISTRO}-openni2-launch \
-    ros-${ROS_DISTRO}-gmapping \
-    python-rosdep && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get upgrade -y 
-RUN apt-get install -y \
+    nano \
     bash-completion \
     htop \
     tmux \
@@ -66,12 +38,40 @@ RUN apt-get install -y \
     jwm \
     #less \
     python3-numpy \
-    python-pip && \
-    curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python - && \
-    pip install -U --no-cache-dir supervisor supervisor_twiddler && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    python-pip \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# install ROS packages
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
+    curl -L http://packages.osrfoundation.org/gazebo.key | apt-key add -
+
+RUN apt-get update && apt-get upgrade -y 
+RUN apt-get install -y \
+    ros-${ROS_DISTRO}-desktop-full \
+    ros-${ROS_DISTRO}-linux-peripheral-interfaces \
+    ros-${ROS_DISTRO}-diagnostics \
+    ros-${ROS_DISTRO}-navigation \
+    ros-${ROS_DISTRO}-hector-slam \
+    ros-${ROS_DISTRO}-octomap-server \
+    ros-${ROS_DISTRO}-octomap-rviz-plugins \
+    ros-${ROS_DISTRO}-vision-opencv \
+    ros-${ROS_DISTRO}-depth-image-proc \
+    ros-${ROS_DISTRO}-joy \
+    ros-${ROS_DISTRO}-serial \
+    ros-${ROS_DISTRO}-openni2-launch \
+    ros-${ROS_DISTRO}-gmapping \
+    python-rosdep \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# update pip and install some modules
+RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python - && \
+    pip install -U --no-cache-dir \
+        supervisor \
+        supervisor_twiddler
 
 # install noVNC
 ENV NO_VNC_HOME=/opt/noVNC
@@ -83,21 +83,21 @@ RUN rm -Rf $NO_VNC_HOME && \
 
 COPY ./index.html $NO_VNC_HOME
 
-RUN rm /etc/apt/apt.conf.d/docker-clean
-
 # install code-server
 ENV VERSION=4.0.0
 RUN wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     dpkg -i code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     rm -f code-server_${VERSION}_$(dpkg --print-architecture).deb
 
-RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
-    rosdep init
-
 # update tigervnc
 COPY ./app/install/tigervnc.sh /
 
 RUN /tigervnc.sh && sudo rm -f /tigervnc.sh
+
+# init rosdep
+RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
+    rosdep init && \
+    rm /etc/apt/apt.conf.d/docker-clean
 
 # compile turtlebot2 packages from sources
 RUN apt-get update && sudo apt-get upgrade -y 
@@ -117,12 +117,16 @@ RUN bash /turtlebot2.sh && \
 
 RUN mkdir -p /workspace
 
-# setup user
+# setup user space
+RUN mkdir -p {/workspace,/app}
+
 RUN useradd -m developer && \
     usermod -aG sudo developer && \
     usermod --shell /bin/bash developer && \
     chown -R developer:developer /workspace && \
+    chown -R developer:developer /app && \
     ln -sfn /workspace /home/developer/workspace && \
+    ln -sfn /app /home/developer/app && \
     echo developer ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/developer && \
     chmod 0440 /etc/sudoers.d/developer
 
