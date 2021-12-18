@@ -157,6 +157,8 @@ RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
 
 COPY ./app /app
 
+RUN sudo chown -R developer:developer /app
+
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 RUN echo "export TURTLEBOT_3D_SENSOR=asus_xtion_pro" >> ~/.bashrc
