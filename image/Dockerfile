@@ -62,6 +62,7 @@ RUN apt-get install -y \
     ros-${ROS_DISTRO}-serial \
     ros-${ROS_DISTRO}-openni2-launch \
     ros-${ROS_DISTRO}-gmapping \
+    ros-${ROS_DISTRO}-plotjuggler-ros \
     python-rosdep \
     && apt-get autoremove -y \
     && apt-get clean \
