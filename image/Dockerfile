@@ -113,16 +113,16 @@ RUN apt-get install -y \
     nodejs \
 	&& rm -rf /var/lib/apt/lists/*
 
-# install code-server
-ENV VERSION=4.0.0
-RUN wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
-    dpkg -i code-server_${VERSION}_$(dpkg --print-architecture).deb && \
-    rm -f code-server_${VERSION}_$(dpkg --print-architecture).deb
-
 # update tigervnc
 COPY ./app/install/tigervnc.sh /
 
 RUN /tigervnc.sh && sudo rm -f /tigervnc.sh
+
+# install code-server
+ENV VERSION=3.12.0
+RUN wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
+    dpkg -i code-server_${VERSION}_$(dpkg --print-architecture).deb && \
+    rm -f code-server_${VERSION}_$(dpkg --print-architecture).deb
 
 # setup user space
 RUN mkdir -p {/workspace,/app}
