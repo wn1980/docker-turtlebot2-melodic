@@ -83,6 +83,15 @@ RUN rm -Rf $NO_VNC_HOME && \
 
 COPY ./index.html $NO_VNC_HOME
 
+# install nodejs
+RUN sh -c 'echo "deb https://deb.nodesource.com/node_8.x `lsb_release -cs` main" > /etc/apt/sources.list.d/nodesource.list' && \
+    curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y \
+    nodejs \
+	&& rm -rf /var/lib/apt/lists/*
+
 # install code-server
 ENV VERSION=4.0.0
 RUN wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
