@@ -12,7 +12,7 @@ services:
 
   master:
     image: ros:melodic-ros-core-bionic
-    container_name: ros_master
+    container_name: ros1_master
     init: true
     restart: always
     command: roscore
