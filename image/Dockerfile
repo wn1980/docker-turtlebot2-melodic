@@ -167,18 +167,15 @@ COPY ./app /app
 
 RUN sudo chown -R developer:developer /app
 
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
-
-RUN echo "export TURTLEBOT_3D_SENSOR=asus_xtion_pro" >> ~/.bashrc
-
-RUN echo "export TURTLEBOT_MAP_FILE=~/workspace/maps/map.yaml" >> ~/.bashrc
-
-#RUN echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
+	#echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc && \
+    echo "export TURTLEBOT_3D_SENSOR=asus_xtion_pro" >> ~/.bashrc && \
+    echo "export TURTLEBOT_MAP_FILE=~/workspace/maps/map.yaml" >> ~/.bashrc
 
 VOLUME /tmp/.X11-unix
 
 ENV DISPLAY ":1"
 
-EXPOSE 11311 8558 9901
+EXPOSE 11311 8008 6901
 
 CMD ["sudo", "-E", "/usr/local/bin/supervisord", "-c", "/app/supervisord.conf"]
