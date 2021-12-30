@@ -25,7 +25,7 @@ mv kobuki/kobuki_description kobuki/kobuki_node \
 rm -rf kobuki
 
 git clone --single-branch --branch melodic https://github.com/yujinrobot/kobuki_desktop.git
-mv kobuki_desktop/kobuki_gazebo_plugins ./
+mv kobuki_desktop/kobuki_gazebo_plugins kobuki_desktop/kobuki_dashboard ./
 rm -rf kobuki_desktop
 
 git clone https://github.com/yujinrobot/yujin_ocs.git
