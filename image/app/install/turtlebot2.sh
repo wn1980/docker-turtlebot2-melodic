@@ -21,7 +21,7 @@ git clone https://github.com/turtlebot/turtlebot_viz.git
 git clone --single-branch --branch melodic https://github.com/yujinrobot/kobuki.git
 mv kobuki/kobuki_description kobuki/kobuki_node \
   kobuki/kobuki_keyop kobuki/kobuki_safety_controller \
-  kobuki/kobuki_bumper2pc ./
+  kobuki/kobuki_bumper2pc kobuki/kobuki_auto_docking ./
 rm -rf kobuki
 
 git clone --single-branch --branch melodic https://github.com/yujinrobot/kobuki_desktop.git

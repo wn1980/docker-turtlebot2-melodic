@@ -35,8 +35,9 @@ RUN apt-get install -y \
     #tigervnc-xorg-extension \
     #novnc \
     #fluxbox \
-    jwm \
     #less \
+    jwm \
+    xfe \
     python3-numpy \
     python-pip \
     && apt-get autoremove -y \
@@ -163,12 +164,18 @@ RUN echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc && \
     #bash -i -c "bash-it enable completion git" && \
     echo "source ~/.bashrc" >> ~/.bash_profile 
 
+RUN mkdir -p $HOME/catkin_ws/src && \
+	cd $HOME/catkin_ws && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    catkin_make
+
 COPY ./app /app
 
 RUN sudo chown -R developer:developer /app
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
-	#echo "source ~/turtlebot_ws/install/setup.bash" >> ~/.bashrc && \
+	echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
+    echo "export TURTLEBOT_BASE=kobuki" >> ~/.bashrc && \
     echo "export TURTLEBOT_3D_SENSOR=asus_xtion_pro" >> ~/.bashrc && \
     echo "export TURTLEBOT_MAP_FILE=~/workspace/maps/map.yaml" >> ~/.bashrc
 

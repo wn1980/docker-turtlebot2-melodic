@@ -22,7 +22,7 @@ services:
       - "11311:11311"
 
   turtlebot2:
-    build: ./image
+    #build: ./image
     image: wn1980/turtlebot2-melodic${TAG}
     container_name: ros_turtlebot2_melodic
     init: true
