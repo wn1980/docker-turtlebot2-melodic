@@ -34,12 +34,15 @@ mv yujin_ocs/yocs_controllers ./
 rm -rf yujin_ocs
 
 sudo apt-get install  -y \
-  ros-melodic-kobuki-core \
-  ros-melodic-kobuki-msgs \
-  ros-melodic-ecl-streams \
-  ros-melodic-yocs-cmd-vel-mux \
-  ros-melodic-yocs-velocity-smoother \
-  ros-melodic-depthimage-to-laserscan \
+  ros-${ROS_DISTRO}-kobuki-core \
+  ros-${ROS_DISTRO}-kobuki-msgs \
+  ros-${ROS_DISTRO}-ecl-streams \
+  ros-${ROS_DISTRO}-yocs-cmd-vel-mux \
+  ros-${ROS_DISTRO}-yocs-velocity-smoother \
+  ros-${ROS_DISTRO}-depthimage-to-laserscan \
+  ros-${ROS_DISTRO}-vision-opencv \
+  ros-${ROS_DISTRO}-openni2-launch \
+  ros-${ROS_DISTRO}-rqt-robot-dashboard \
   ros-melodic-joy
 
   # make and install
