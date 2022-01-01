@@ -80,22 +80,6 @@ RUN rm /etc/ros/rosdep/sources.list.d/20-default.list && \
     rosdep init && \
     rm /etc/apt/apt.conf.d/docker-clean
 
-# compile turtlebot2 packages from sources
-RUN apt-get update && sudo apt-get upgrade -y 
-
-COPY ./app/install/turtlebot2.sh /
-
-RUN bash /turtlebot2.sh && \
-    #source /opt/ros/$ROS_DISTRO/setup.bash && \
-    #mkdir -p ~/turtlebot_ws/src && \
-	#cd ~/turtlebot_ws && \
-    #bash /turtlebot2.sh && \
-    #curl -sLf https://raw.githubusercontent.com/gaunthan/Turtlebot2-On-Melodic/master/install_basic.sh | bash - && \
-    #catkin_make install -DCMAKE_BUILD_TYPE=Release && \
-	#catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0 && \
-	#rm -rf /root/turtlebot_ws && \
-    rm -f /turtlebot2.sh
-
 # install noVNC
 ENV NO_VNC_HOME=/opt/noVNC
 
@@ -107,7 +91,7 @@ RUN rm -Rf $NO_VNC_HOME && \
 COPY ./index.html $NO_VNC_HOME
 
 # install nodejs
-RUN sh -c 'echo "deb https://deb.nodesource.com/node_8.x `lsb_release -cs` main" > /etc/apt/sources.list.d/nodesource.list' && \
+RUN sh -c 'echo "deb https://deb.nodesource.com/node_12.x `lsb_release -cs` main" > /etc/apt/sources.list.d/nodesource.list' && \
     curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 
 RUN apt-get update && apt-get upgrade -y
@@ -122,9 +106,17 @@ RUN /tigervnc.sh && sudo rm -f /tigervnc.sh
 
 # install code-server
 ENV VERSION=3.12.0
-RUN wget https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
+RUN wget -q https://github.com/cdr/code-server/releases/download/v${VERSION}/code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     dpkg -i code-server_${VERSION}_$(dpkg --print-architecture).deb && \
     rm -f code-server_${VERSION}_$(dpkg --print-architecture).deb
+
+# compile turtlebot2 packages from sources
+RUN apt-get update && sudo apt-get upgrade -y 
+
+COPY ./app/install/turtlebot2.sh /
+
+RUN bash /turtlebot2.sh && \
+    rm -f /turtlebot2.sh
 
 # setup user space
 RUN mkdir -p {/workspace,/app}

@@ -29,9 +29,10 @@ mv kobuki_desktop/kobuki_gazebo_plugins kobuki_desktop/kobuki_dashboard ./
 rm -rf kobuki_desktop
 
 git clone https://github.com/yujinrobot/yujin_ocs.git
-#mv yujin_ocs/yocs_cmd_vel_mux yujin_ocs/yocs_controllers ./
 mv yujin_ocs/yocs_controllers ./
 rm -rf yujin_ocs
+
+git clone https://github.com/YDLIDAR/ydlidar_ros.git
 
 sudo apt-get install  -y \
   ros-${ROS_DISTRO}-kobuki-core \
